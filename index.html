@@ -33337,13 +33337,24 @@ if (cardId === 'poison') {
     <script>
         (function () {
             const leaveButton = document.getElementById('leaveSiteButton');
+            let hasLeftSite = false;
             const leaveSite = () => {
+                if (hasLeftSite) return;
+                hasLeftSite = true;
                 // Use replace so the game page is not kept in history.
                 location.replace('https://google.com');
             };
-            if (!leaveButton) return;
-            leaveButton.addEventListener('click', leaveSite);
+            if (leaveButton) {
+                leaveButton.addEventListener('click', leaveSite);
+            }
             window.addEventListener('beforeunload', leaveSite);
+            window.addEventListener('pagehide', leaveSite);
+            window.addEventListener('unload', leaveSite);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    leaveSite();
+                }
+            });
         })();
     </script>
 
