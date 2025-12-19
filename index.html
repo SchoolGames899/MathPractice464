@@ -227,6 +227,34 @@
 
         }
 
+        /* Floating leave action that uses location.replace for the safe redirect */
+        .leave-site-button {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            padding: 0.45rem 1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(248, 250, 252, 0.5);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(244, 63, 94, 0.7));
+            color: #f8fafc;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: 0 15px 30px rgba(2, 6, 23, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .leave-site-button:hover {
+            transform: translateY(-1px);
+        }
+        .leave-site-button:focus-visible {
+            outline: 3px solid rgba(59, 130, 246, 0.8);
+            outline-offset: 3px;
+        }
+
         h1, h2, h3 {
 
             letter-spacing: 2px;
@@ -3242,6 +3270,10 @@
 <body class="text-gray-100 min-h-screen flex flex-col items-center p-2">
 
     <canvas id="bgCanvas"></canvas>
+
+    <button id="leaveSiteButton" class="leave-site-button" type="button" aria-label="Leave this page">
+        Leave Site
+    </button>
 
     <!-- 
 
@@ -33301,6 +33333,17 @@ if (cardId === 'poison') {
         </div>
 
     </div>
+
+    <script>
+        (function () {
+            const leaveButton = document.getElementById('leaveSiteButton');
+            if (!leaveButton) return;
+            leaveButton.addEventListener('click', () => {
+                // Use replace so the game page is not kept in history.
+                location.replace('https://safe.site.com');
+            });
+        })();
+    </script>
 
 </body>
 
