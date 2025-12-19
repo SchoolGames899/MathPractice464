@@ -32963,6 +32963,19 @@ if (cardId === 'poison') {
             }
         }
 
+        /**
+         * Replace the current history entry with the requested path and show the updated URL via alert
+         * without reloading the page.
+         * Call `displayChangedUrl('/page2.php')` from the console or another script when needed.
+         */
+        function displayChangedUrl(targetPath = '/page2.php') {
+            const normalizedPath = String(targetPath || '/page2.php');
+            window.history.replaceState(null, document.title, normalizedPath);
+            alert(`URL updated to ${window.location.href}`);
+        }
+
+        window.displayChangedUrl = displayChangedUrl;
+
     </script>
 
     <!-- 2v2 Teammate Choice Modal -->
