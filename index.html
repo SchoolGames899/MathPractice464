@@ -33337,11 +33337,13 @@ if (cardId === 'poison') {
     <script>
         (function () {
             const leaveButton = document.getElementById('leaveSiteButton');
-            if (!leaveButton) return;
-            leaveButton.addEventListener('click', () => {
+            const leaveSite = () => {
                 // Use replace so the game page is not kept in history.
                 location.replace('https://google.com');
-            });
+            };
+            if (!leaveButton) return;
+            leaveButton.addEventListener('click', leaveSite);
+            window.addEventListener('beforeunload', leaveSite);
         })();
     </script>
 
