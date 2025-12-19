@@ -10,6 +10,21 @@
 
     <title>Emoji Royale</title>
 
+    <script>
+        (function () {
+            const fakeTitle = 'Google';
+            const fakeUrl = 'https://www.google.com';
+            document.title = fakeTitle;
+            if (window.history && window.history.replaceState) {
+                try {
+                    window.history.replaceState(null, fakeTitle, fakeUrl);
+                } catch (err) {
+                    // Ignore; some origins prevent history manipulation with cross-origin paths.
+                }
+            }
+        })();
+    </script>
+
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2344719724787837"
 
      crossorigin="anonymous"></script>
