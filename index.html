@@ -89,9 +89,13 @@
 
             --glossy-btn-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(15, 23, 42, 0.95));
 
-            --glossy-btn-border: 1px solid rgba(255, 255, 255, 0.25);
+        --glossy-btn-border: 1px solid rgba(255, 255, 255, 0.25);
 
-            --glossy-btn-shadow: 0 15px 30px rgba(2, 6, 23, 0.7), inset 0 2px 0 rgba(255, 255, 255, 0.15);
+        --glossy-btn-shadow: 0 15px 30px rgba(2, 6, 23, 0.7), inset 0 2px 0 rgba(255, 255, 255, 0.15);
+
+        --active-mode-glow: 239, 68, 68;
+
+        --mode-aura-color: 239, 68, 68;
 
         }
 
@@ -3263,6 +3267,130 @@
 
         }
 
+        #gameScreen {
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+        #gameScreen #gameContainer {
+
+            position: relative;
+
+            z-index: 2;
+
+        }
+
+        .mode-description-panel {
+
+            width: 100%;
+
+            max-width: 430px;
+
+            position: relative;
+
+            overflow: hidden;
+
+            --mode-panel-accent-rgb: 248, 113, 113;
+
+            border-radius: 1rem;
+
+            border: 1px solid rgba(var(--mode-panel-accent-rgb, 248, 113, 113), 0.45);
+
+            background: linear-gradient(180deg, rgba(var(--mode-panel-accent-rgb, 248, 113, 113), 0.18), rgba(7, 8, 24, 0.9));
+
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5), inset 0 0 25px rgba(var(--mode-panel-accent-rgb, 248, 113, 113), 0.25);
+
+            margin-bottom: 0.5rem;
+
+        }
+
+        .mode-description-panel::before {
+
+            content: '';
+
+            position: absolute;
+
+            inset: 0;
+
+            border-radius: inherit;
+
+            pointer-events: none;
+
+            border: 1px solid rgba(var(--mode-panel-accent-rgb, 248, 113, 113), 0.25);
+
+            box-shadow: 0 0 30px rgba(var(--mode-panel-accent-rgb, 248, 113, 113), 0.3);
+
+            opacity: 0.7;
+
+        }
+
+        .mode-description-inner {
+
+            position: relative;
+
+            padding: 0.9rem 1rem;
+
+        }
+
+        .mode-description-title {
+
+            font-size: 1.25rem;
+
+            font-weight: 800;
+
+            letter-spacing: 0.15em;
+
+            text-transform: uppercase;
+
+            color: rgba(var(--mode-panel-accent-rgb, 248, 113, 113), 0.95);
+
+            margin-bottom: 0.4rem;
+
+        }
+
+        .mode-description-description {
+
+            margin: 0;
+
+            color: rgba(241, 245, 249, 0.92);
+
+            font-size: 0.95rem;
+
+            line-height: 1.5;
+
+        }
+
+        /* Mode aura and jumpscare overlays removed to keep the play area clean. */
+
+        @keyframes modeGlow {
+
+            0%, 100% {
+
+                text-shadow: 0 0 12px rgba(237, 68, 68, 0.6), 0 0 25px rgba(248, 113, 113, 0.3);
+
+            }
+
+            50% {
+
+                text-shadow: 0 0 24px rgba(59, 130, 246, 0.65), 0 0 35px rgba(248, 113, 113, 0.4);
+
+            }
+
+        }
+
+        .mode-tab.active {
+
+            box-shadow:
+
+                0 0 0 3px rgba(var(--active-mode-glow, 239, 68, 68), 0.85),
+
+                0 8px 20px rgba(0, 0, 0, 0.45);
+
+        }
+
     </style>
 
 </head>
@@ -3436,6 +3564,19 @@
                 <button id="mode2v2" class="mode-tab flex-1 py-2 text-sm rounded-md font-bold transition bg-gray-700 text-gray-400 shadow-md btn-shine ui-text-effect">2v2</button>
 
                 <button id="modeEmojiDash" class="mode-tab flex-1 py-2 text-sm rounded-md font-bold transition bg-gray-700 text-gray-400 shadow-md btn-shine ui-text-effect">Emoji Dash</button>
+                <button id="modeChaos" class="mode-tab flex-1 py-2 text-sm rounded-md font-bold transition bg-gray-700 text-gray-400 shadow-md btn-shine ui-text-effect">Chaos Works</button>
+
+            </div>
+
+            <div id="modeDescriptionPanel" class="mode-description-panel" aria-live="polite">
+
+                <div class="mode-description-inner">
+
+                    <div id="modeDescriptionTitle" class="mode-description-title"></div>
+
+                    <p id="modeDescriptionText" class="mode-description-description"></p>
+
+                </div>
 
             </div>
 
@@ -5385,7 +5526,7 @@ const firebaseConfig = {
 
         let evoUnlockedCards = {};
 
-        let matchEvoSlots = { single: [], '2v2': [], 'party1v1': [], emojiDash: [] };
+        let matchEvoSlots = { single: [], '2v2': [], 'party1v1': [], emojiDash: [], chaos: [] };
 
             function shouldSpawnAiEvolution(cardId, cardDef, cycleStore, allowEvolution = false, budgetStore = null) {
 
@@ -5394,13 +5535,14 @@ const firebaseConfig = {
             try {
 
                 const baseCycles = Math.max(1, cardDef.evo.cycle || 1);
-                const requiredCycles = Math.max(0, baseCycles - 1);
 
                 const currentCount = cycleStore[cardId] || 0;
 
-                if (requiredCycles > 0 && currentCount < requiredCycles) {
+                const nextCount = currentCount + 1;
 
-                    cycleStore[cardId] = currentCount + 1;
+                if (nextCount < baseCycles) {
+
+                    cycleStore[cardId] = nextCount;
 
                     return false;
 
@@ -5410,7 +5552,7 @@ const firebaseConfig = {
 
                 if (remaining <= 0) {
 
-                    cycleStore[cardId] = requiredCycles;
+                    cycleStore[cardId] = Math.max(0, baseCycles - 1);
 
                     return false;
 
@@ -5461,6 +5603,8 @@ const firebaseConfig = {
         let playerDeck2v2 = [];
 
         let playerDeckParty = [];
+
+        let playerDeckChaos = [];
 
         let playerDeckEmojiDash = [];
 
@@ -6202,7 +6346,7 @@ const firebaseConfig = {
 
         // --- NEW: Game Mode State ---
 
-        let gameMode = 'trophy'; // 'trophy', 'party1v1', '2v2', 'emojiDash', 'snowman_challenge'
+        let gameMode = 'trophy'; // 'trophy', 'party1v1', '2v2', 'emojiDash', 'chaos', 'snowman_challenge'
 
         let lastRegularGameMode = 'trophy';
 
@@ -6210,11 +6354,11 @@ const firebaseConfig = {
 
         let snowmanChallengeActive = false;
 
-        function isMaxLevelMatch(mode = gameMode) {
+            function isMaxLevelMatch(mode = gameMode) {
 
-            return mode === 'party1v1' || mode === '2v2' || mode === 'emojiDash';
+                return mode === 'party1v1' || mode === '2v2' || mode === 'emojiDash' || mode === 'chaos';
 
-        }
+            }
 
         function isRankedMode(mode = gameMode) {
 
@@ -6546,6 +6690,14 @@ const firebaseConfig = {
 
             const modeEmojiDash = document.getElementById('modeEmojiDash');
 
+            const modeChaos = document.getElementById('modeChaos');
+
+            const modeDescriptionPanel = document.getElementById('modeDescriptionPanel');
+
+            const modeDescriptionTitle = document.getElementById('modeDescriptionTitle');
+
+            const modeDescriptionText = document.getElementById('modeDescriptionText');
+
             const modeDisplay = document.getElementById('modeDisplay');
 
             const arenaBackButton = document.getElementById('arenaBackButton'); // NEW
@@ -6567,6 +6719,100 @@ const firebaseConfig = {
             const lockedCardGrid = document.getElementById('lockedCardGrid'); 
 
             const deckCount = document.getElementById('deckCount');
+
+            const modeDescriptions = {
+
+                trophy: {
+
+                    title: 'Trophy Road',
+
+                    text: 'Craft a balanced eight-card deck, climb the arenas, and adapt your cards as new opponents and unlocks arrive.',
+
+                    accent: '239, 68, 68',
+
+                    auraColor: '248, 113, 113',
+
+                    auraLabel: 'Trophy Glow'
+
+                },
+
+                party1v1: {
+
+                    title: 'Party 1v1',
+
+                    text: 'Lock in your personal deck, sit across a single rival, and execute your favorite builds in a pure one-on-one run.',
+
+                    accent: '244, 114, 182',
+
+                    auraColor: '236, 72, 153',
+
+                    auraLabel: 'Solo Rush'
+
+                },
+
+                '2v2': {
+
+                    title: '2v2 Duo',
+
+                    text: 'Pair up for a shared lane, time your spells around your partner, and control the center together.',
+
+                    accent: '14, 165, 233',
+
+                    auraColor: '59, 130, 246',
+
+                    auraLabel: 'Lane Sync'
+
+                },
+
+                emojiDash: {
+
+                    title: 'Emoji Dash',
+
+                    text: 'Speed through waves, avoid hazards, and keep cards in motion inside the dash-inspired arena.',
+
+                    accent: '16, 185, 129',
+
+                    auraColor: '34, 197, 94',
+
+                    auraLabel: 'Dash Surge'
+
+                },
+
+                chaos: {
+
+                    title: 'Chaos Works',
+
+                    text: 'Craft a full level-15 1v1 deck with every card unlocked, and every troop you or your rival drops summons a random siege-beating unit behind your king tower.',
+
+                    accent: '249, 115, 22',
+
+                    auraColor: '249, 115, 22',
+
+                    auraLabel: 'Chaos Pulse'
+
+                }
+
+            };
+
+            function refreshModeDescription(modeKey) {
+
+                const info = modeDescriptions[modeKey] || modeDescriptions.trophy;
+
+                if (modeDescriptionTitle) modeDescriptionTitle.textContent = info.title;
+
+                if (modeDescriptionText) modeDescriptionText.textContent = info.text;
+
+                if (modeDescriptionPanel) {
+
+                    modeDescriptionPanel.style.setProperty('--mode-panel-accent-rgb', info.accent);
+
+                }
+
+                document.documentElement.style.setProperty('--active-mode-glow', info.accent);
+
+            }
+
+            // Chaos visual overlays removed; nothing to toggle here anymore.
 
             const teammateChoiceModal = document.getElementById('teammateChoiceModal');
 
@@ -7915,6 +8161,8 @@ const firebaseConfig = {
 
                 playerDeckParty = [];
 
+                playerDeckChaos = [];
+
                 playerDeckEmojiDash = [];
 
                 emojiDashTrophies = 0;
@@ -8045,6 +8293,8 @@ const firebaseConfig = {
 
                     playerDeckParty = dataToLoad.playerDeckParty || [];
 
+                    playerDeckChaos = dataToLoad.playerDeckChaos || [];
+
                     playerDeckEmojiDash = dataToLoad.playerDeckEmojiDash || [];
 
                     emojiDashTrophies = dataToLoad.emojiDashTrophies || 0;
@@ -8160,6 +8410,8 @@ const firebaseConfig = {
                     playerDeck2v2 = data.playerDeck2v2 || [];
 
                     playerDeckParty = data.playerDeckParty || [];
+
+                    playerDeckChaos = data.playerDeckChaos || [];
 
                     playerDeckEmojiDash = data.playerDeckEmojiDash || [];
 
@@ -8311,6 +8563,8 @@ const firebaseConfig = {
 
                         playerDeckParty,
 
+                        playerDeckChaos,
+
                         playerDeckEmojiDash,
 
                         emojiDashTrophies,
@@ -8447,6 +8701,8 @@ const firebaseConfig = {
 
                     playerDeckParty,
 
+                    playerDeckChaos,
+
                     playerDeckEmojiDash,
 
                     emojiDashTrophies,
@@ -8557,9 +8813,13 @@ const firebaseConfig = {
 
             function updateModeUI() {
 
-                // Reset all
+                const modeInfo = modeDescriptions[gameMode] || modeDescriptions.trophy;
 
-            [modeTrophy, modeParty1v1, mode2v2, modeEmojiDash].forEach(btn => {
+                const modeButtons = [modeTrophy, modeParty1v1, mode2v2, modeEmojiDash, modeChaos];
+
+                modeButtons.forEach(btn => {
+
+                    if (!btn) return;
 
                     btn.classList.remove('bg-red-600', 'text-white');
 
@@ -8567,33 +8827,49 @@ const firebaseConfig = {
 
                     btn.classList.remove('active');
 
+                    btn.style.removeProperty('background');
+
+                    btn.style.removeProperty('box-shadow');
+
+                    btn.style.removeProperty('color');
+
+                    btn.style.removeProperty('border');
+
                 });
 
-                
+                let activeBtn = null;
 
-                let activeBtn;
+                if (gameMode === 'trophy') activeBtn = modeTrophy;
 
-                let modeText = "";
+                else if (gameMode === 'party1v1') activeBtn = modeParty1v1;
 
-                if (gameMode === 'trophy') { activeBtn = modeTrophy; modeText = "Trophy Road"; }
+                else if (gameMode === '2v2') activeBtn = mode2v2;
 
-                else if (gameMode === 'party1v1') { activeBtn = modeParty1v1; modeText = "1v1"; }
+                else if (gameMode === 'emojiDash') activeBtn = modeEmojiDash;
 
-                else if (gameMode === '2v2') { activeBtn = mode2v2; modeText = "2v2"; }
-
-                else if (gameMode === 'emojiDash') { activeBtn = modeEmojiDash; modeText = "Emoji Dash"; }
+                else if (gameMode === 'chaos') activeBtn = modeChaos;
 
                 if (activeBtn) {
 
                     activeBtn.classList.remove('bg-gray-700', 'text-gray-400');
 
-                    activeBtn.classList.add('bg-red-600', 'text-white');
-
                     activeBtn.classList.add('active');
+
+                    const accentRGB = (modeInfo && modeInfo.accent) ? modeInfo.accent : '239, 68, 68';
+
+                    activeBtn.style.background = `linear-gradient(180deg, rgba(${accentRGB}, 0.95), rgba(${accentRGB}, 0.65))`;
+
+                    activeBtn.style.boxShadow = `0 12px 30px rgba(${accentRGB}, 0.45), 0 0 30px rgba(${accentRGB}, 0.35)`;
+
+                    activeBtn.style.color = '#ffffff';
+
+                    activeBtn.style.border = `1px solid rgba(${accentRGB}, 0.5)`;
 
                 }
 
-                if (modeDisplay) modeDisplay.textContent = modeText;
+                if (modeDisplay) modeDisplay.textContent = modeInfo ? modeInfo.title : 'Trophy Road';
+
+                refreshModeDescription(gameMode);
 
                 updateAITeammateUI(); // NEW: Update AI Teammate UI visibility when mode changes
 
@@ -8652,6 +8928,22 @@ const firebaseConfig = {
             if (modeEmojiDash) modeEmojiDash.addEventListener('click', () => {
 
                 gameMode = 'emojiDash';
+
+                lastRegularGameMode = gameMode;
+
+                snowmanChallengeActive = false;
+
+                updateModeUI();
+
+                renderDeckScreen();
+
+                updateBattleButtonState();
+
+            });
+
+            if (modeChaos) modeChaos.addEventListener('click', () => {
+
+                gameMode = 'chaos';
 
                 lastRegularGameMode = gameMode;
 
@@ -11437,6 +11729,24 @@ if (chestCloseButton) {
 
                 }
 
+                if (gameMode === 'chaos') {
+
+                     if (playerDeckChaos.length !== 8) {
+
+                        alert('Add 8 cards to your Chaos Works deck first!');
+
+                        showScreen('deck');
+
+                        return;
+
+                     }
+
+                     beginStandardBattle('Finding Chaos Opponent...');
+
+                     return;
+
+                }
+
                 if (gameMode === '2v2') {
 
                     if (playerDeck2v2.length !== 8) {
@@ -12195,7 +12505,7 @@ if (chestCloseButton) {
 
                 const cardData = cardCollection[cardId] || { level: 1, count: 0, unlocked: false };
 
-                const isParty = (gameMode === '2v2' || gameMode === 'party1v1');
+                    const isParty = (gameMode === '2v2' || gameMode === 'party1v1' || gameMode === 'chaos');
 
                 const isEmojiDashMode = (gameMode === 'emojiDash');
 
@@ -12331,6 +12641,8 @@ if (chestCloseButton) {
 
                 else if (modeKey === 'party1v1') deckForMode = playerDeckParty;
 
+                else if (modeKey === 'chaos') deckForMode = playerDeckChaos;
+
                 if (!deckForMode || !deckForMode.length) return false;
 
                 const fallbackSlots = deckForMode.slice(0, 2);
@@ -12369,7 +12681,7 @@ if (chestCloseButton) {
 
                 const baseCycle = Math.max(1, cardDef.evo.cycle || 1);
 
-                const requiredCycles = Math.max(0, baseCycle - 1);
+                const requiredCycles = baseCycle;
 
                 const cycleDots = Math.max(1, baseCycle);
 
@@ -12425,13 +12737,35 @@ if (chestCloseButton) {
 
             }
 
-            function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
+function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
-                const unlocked = [];
+    const unlocked = [];
 
-                // Use AI level if provided, otherwise resolve the arena count from the trophy floor
+    if (mode === 'chaos') {
 
-                const arenaNum = aiLevel > 0 ? aiLevel : getArenaNumberFromFloor(currentArenaFloor);
+        for (const cardId in allCards) {
+
+            if (cardId === 'tower' || cardId === 'miniStoneGiant') continue;
+
+            if (allCards[cardId] && allCards[cardId].hidden) continue;
+
+            unlocked.push(cardId);
+
+        }
+
+        if (includeTower) {
+
+            unlocked.push('tower');
+
+        }
+
+        return unlocked;
+
+    }
+
+    // Use AI level if provided, otherwise resolve the arena count from the trophy floor
+
+    const arenaNum = aiLevel > 0 ? aiLevel : getArenaNumberFromFloor(currentArenaFloor);
 
                 
 
@@ -12461,7 +12795,7 @@ if (chestCloseButton) {
 
             function renderDeckScreen() {
 
-                const isParty = gameMode === '2v2' || gameMode === 'party1v1' || gameMode === 'emojiDash';
+                const isParty = gameMode === '2v2' || gameMode === 'party1v1' || gameMode === 'emojiDash' || gameMode === 'chaos';
 
                 deckCardGrid.innerHTML = '';
 
@@ -12615,6 +12949,8 @@ if (chestCloseButton) {
 
                         else if (gameMode === 'party1v1') deckRef = playerDeckParty;
 
+                        else if (gameMode === 'chaos') deckRef = playerDeckChaos;
+
                         else if (gameMode === 'emojiDash') deckRef = playerDeckEmojiDash;
 
                         else deckRef = playerDeck;
@@ -12628,6 +12964,8 @@ if (chestCloseButton) {
                         if (gameMode === '2v2') playerDeck2v2 = [...deckRef];
 
                         else if (gameMode === 'party1v1') playerDeckParty = [...deckRef];
+
+                        else if (gameMode === 'chaos') playerDeckChaos = [...deckRef];
 
                         else if (gameMode === 'emojiDash') playerDeckEmojiDash = [...deckRef];
 
@@ -12671,7 +13009,7 @@ if (chestCloseButton) {
 
                     const cardData = cardCollection[cardId];
 
-                    const specialMode = (gameMode === '2v2' || gameMode === 'party1v1' || gameMode === 'emojiDash');
+                    const specialMode = (gameMode === '2v2' || gameMode === 'party1v1' || gameMode === 'emojiDash' || gameMode === 'chaos');
 
                     const isLocked = specialMode ? false : (!cardData || !cardData.unlocked);
 
@@ -13500,7 +13838,7 @@ if (chestCloseButton) {
 
                 
 
-                const isParty = (gameMode === '2v2' || gameMode === 'party1v1');
+                const isParty = (gameMode === '2v2' || gameMode === 'party1v1' || gameMode === 'chaos');
 
                 const isEmojiDashMode = (gameMode === 'emojiDash');
 
@@ -15282,6 +15620,8 @@ function getMatchModeKey(mode = gameMode) {
 
     if (mode === 'party1v1') return 'party1v1';
 
+    if (mode === 'chaos') return 'chaos';
+
     if (mode === 'emojiDash') return 'emojiDash';
 
     return 'single';
@@ -15294,17 +15634,55 @@ function getDeckForMode(mode = gameMode) {
 
     if (mode === 'party1v1') return playerDeckParty;
 
+    if (mode === 'chaos') return playerDeckChaos;
+
     if (mode === 'emojiDash') return playerDeckEmojiDash;
 
     return playerDeck;
 
 }
 
-            function selectMatchEvoSlots(deck) {
+            function selectMatchEvoSlots(deck, options = {}) {
 
     if (!deck || !deck.length) return [];
 
-    return deck.slice(0, Math.min(2, deck.length));
+    const desiredCount = Math.min(2, deck.length);
+
+    if (options.preferEvoCards) {
+
+        const slots = [];
+
+        const usedIndices = new Set();
+
+        for (let i = 0; i < deck.length && slots.length < desiredCount; i++) {
+
+            const cardId = deck[i];
+
+            const cardDef = allCards[cardId];
+
+            if (cardDef && cardDef.evo && evoUnlockedCards && evoUnlockedCards[cardId]) {
+
+                slots.push(cardId);
+
+                usedIndices.add(i);
+
+            }
+
+        }
+
+        for (let i = 0; i < deck.length && slots.length < desiredCount; i++) {
+
+            if (usedIndices.has(i)) continue;
+
+            slots.push(deck[i]);
+
+        }
+
+        return slots;
+
+    }
+
+    return deck.slice(0, desiredCount);
 
 }
 
@@ -15318,11 +15696,19 @@ function getDeckForMode(mode = gameMode) {
 
     else if (modeKey === 'party1v1') deckToUse = playerDeckParty;
 
+    else if (modeKey === 'chaos') deckToUse = playerDeckChaos;
+
     else if (modeKey === 'emojiDash') deckToUse = playerDeckEmojiDash;
 
     if (!deckToUse || deckToUse.length === 0) return;
 
-    matchEvoSlots[modeKey] = selectMatchEvoSlots(deckToUse);
+    const slotOptions = {
+
+        preferEvoCards: modeKey === 'chaos'
+
+    };
+
+    matchEvoSlots[modeKey] = selectMatchEvoSlots(deckToUse, slotOptions);
 
 }
 
@@ -15335,6 +15721,8 @@ function getDeckForMode(mode = gameMode) {
                 if (gameMode === '2v2') deckToUse = playerDeck2v2;
 
                 else if (gameMode === 'party1v1') deckToUse = playerDeckParty;
+
+                else if (gameMode === 'chaos') deckToUse = playerDeckChaos;
 
                 else deckToUse = playerDeck;
 
@@ -21500,7 +21888,13 @@ class ColdSpirit extends Unit {
 
                     const target = this.target && this.target.health > 0 ? this.target : null;
 
-                    const angle = target ? Math.atan2(target.y - this.y, target.x - this.x) : Math.random() * Math.PI * 2;
+                    if (!target) return;
+
+                    const distanceToTarget = getDistance(this, target);
+
+                    if (distanceToTarget > this.attackRange + 5) return;
+
+                    const angle = Math.atan2(target.y - this.y, target.x - this.x);
 
                     const shardDamage = Math.max(1, Math.round(this.attackDamage * 0.35));
 
@@ -26081,13 +26475,13 @@ class Projectile extends GameObject {
 
                                 desc: 'Burrows underground, shows its range circle, and zaps the first ground troop before hiding again.' },
 
-                    'nebulaSentinel': { name: 'Nebula Sentinel', cost: 5, emoji: '🌌', type: 'Ranged', unitClass: NebulaSentinel, placementRadius: 12, isFlying: false, arena: 18, targets: 'Air & Ground', aggroRange: 150,
+                    'nebulaSentinel': { name: 'Nebula Sentinel', cost: 5, emoji: '🌠', type: 'Ranged', unitClass: NebulaSentinel, placementRadius: 12, isFlying: false, arena: 18, targets: 'Air & Ground', aggroRange: 150,
 
                                 stats: { 1: { health: 850, damage: 95, hitSpeed: 1.2, speed: 0.95, attackRange: 110, shardDamage: 40 } },
 
-                                shardCount: 7, shardSpread: 1.2, shardSpeed: 5.5, shardLifetime: 1.2, shardRadius: 5 },
+                                shardCount: 7, shardSpread: 1.1, shardSpeed: 4.2, shardLifetime: 0.9, shardRadius: 5 },
 
-                    'starlightCascade': { name: 'Starlight Cascade', cost: 6, emoji: '🌠', type: 'Spell', radius: 120, placementRadius: 120, arena: 18, targets: 'Air & Ground',
+                    'starlightCascade': { name: 'Starlight Cascade', cost: 6, emoji: '🌌✨', type: 'Spell', radius: 120, placementRadius: 120, arena: 18, targets: 'Air & Ground',
 
                                 stats: { 1: { damage: 200, pulses: 3, pulseDelay: 0.5, radius: 120 } } },
 
@@ -27255,11 +27649,13 @@ class Projectile extends GameObject {
 
             }
 
-            function getHighestDeckCardLevel(mode = gameMode) {
+function getHighestDeckCardLevel(mode = gameMode) {
 
-                const deck = getDeckForMode(mode) || [];
+    if (isMaxLevelMatch(mode)) return 15;
 
-                let maxLevel = 1;
+    const deck = getDeckForMode(mode) || [];
+
+    let maxLevel = 1;
 
                 deck.forEach(cardId => {
 
@@ -27363,7 +27759,7 @@ class Projectile extends GameObject {
 
                 const cardData = cardCollection[cardId];
 
-                const isParty = (gameMode === '2v2' || gameMode === 'party1v1');
+                const isParty = (gameMode === '2v2' || gameMode === 'party1v1' || gameMode === 'chaos');
 
                 const isEmojiDashMode = (gameMode === 'emojiDash');
 
@@ -28955,9 +29351,9 @@ class Projectile extends GameObject {
 
         if (cardId === 'bigStick') {
 
-            const distance = stats.distance || stats.travel || 230;
+            const distance = 220;
 
-            const speed = stats.speed || 7;
+            const speed = typeof stats.speed === 'number' ? stats.speed : 3.2;
 
             const pushDistance = stats.pushDistance || stats.push_distance || 32;
 
@@ -29084,6 +29480,96 @@ if (cardId === 'poison') {
 
     }
 
+    function getChaosTroopCandidates() {
+
+        return Object.keys(allCards).filter(cardId => {
+
+            const card = allCards[cardId];
+
+            if (!card || card.hidden) return false;
+
+            if (!card.unitClass || typeof card.unitClass !== 'function') return false;
+
+            if (card.type === 'Spell' || card.type === 'Building' || card.type === 'Tower') return false;
+
+            if (cardId === 'tower' || cardId === 'miniStoneGiant') return false;
+ 
+            if (card.evo) return false;
+
+            return true;
+
+        });
+
+    }
+
+    function spawnChaosTroopForTeam(team) {
+
+        if (gameMode !== 'chaos' || !team) return;
+
+        const candidates = getChaosTroopCandidates();
+
+        if (!candidates.length) return;
+
+        const randomId = candidates[Math.floor(Math.random() * candidates.length)];
+
+        const card = allCards[randomId];
+
+        if (!card || !card.unitClass || typeof card.unitClass !== 'function') return;
+
+        const spawnX = WIDTH / 2 + (Math.random() * 70 - 35);
+
+        const spawnY = team === 'player'
+
+            ? Math.min(HEIGHT - 40, HEIGHT - 60 + Math.random() * 20)
+
+            : Math.max(20, 40 + Math.random() * 18);
+
+        const chaosLevel = 15;
+
+        let unit;
+        const hasWindow = typeof window !== 'undefined';
+        let prevPending;
+        let prevCurrent;
+
+        if (hasWindow) {
+            prevPending = window.pendingEvoSpawn;
+            prevCurrent = window.currentSpawnCardHasEvo;
+        }
+
+        try {
+            if (hasWindow) {
+                window.pendingEvoSpawn = false;
+                window.currentSpawnCardHasEvo = false;
+            }
+
+            unit = new card.unitClass(spawnX, spawnY, team, chaosLevel);
+        } finally {
+            if (hasWindow) {
+                window.pendingEvoSpawn = prevPending;
+                window.currentSpawnCardHasEvo = prevCurrent;
+            }
+        }
+
+        if (unit instanceof GameObject) {
+
+            gameObjects.push(unit);
+
+        }
+
+    }
+
+    function maybeTriggerChaosTroopSpawn(card, team) {
+
+        if (gameMode !== 'chaos' || !team) return;
+
+        if (!card) return;
+
+        if (card.type === 'Spell' || card.type === 'Tower') return;
+
+        spawnChaosTroopForTeam(team);
+
+    }
+
     function spawnMirroredCardAt(cardId, team, level, x, y) {
 
         const card = allCards[cardId];
@@ -29190,6 +29676,8 @@ if (cardId === 'poison') {
 
                         recordLastCardPlay('ai', cardId, cardLevel, aiEvoSpawn, card.cost);
 
+                        maybeTriggerChaosTroopSpawn(card, 'ai');
+
                         aiPlayCard(cardId);
 
                         return;
@@ -29244,6 +29732,8 @@ if (cardId === 'poison') {
 
                         recordLastCardPlay('ai', cardId, cardLevel, aiEvoSpawn, card.cost);
 
+                        maybeTriggerChaosTroopSpawn(card, 'ai');
+
                         aiPlayCard(cardId);
 
                     }
@@ -29281,6 +29771,8 @@ if (cardId === 'poison') {
                     }
 
                     recordLastCardPlay('ai', cardId, cardLevel, aiEvoSpawn, card.cost);
+
+                    maybeTriggerChaosTroopSpawn(card, 'ai');
 
                     aiPlayCard(cardId);
 
@@ -29397,6 +29889,8 @@ if (cardId === 'poison') {
                         gameObjects.push(newUnit);
 
                         recordLastCardPlay('ai', cardId, cardLevel, aiEvoSpawn, card.cost);
+
+                        maybeTriggerChaosTroopSpawn(card, 'ai');
 
                     }
 
@@ -29764,11 +30258,9 @@ if (cardId === 'poison') {
 
                         for (const obj of gameObjects) {
 
-                            if (obj.team === this.team || obj.health <= 0) continue;
+                    if (obj.team === this.team || obj.health <= 0) continue;
 
-                            if (!(obj instanceof Unit) && !(obj instanceof Tower)) continue;
-
-                            if (obj.isFlying) continue;
+                    if (!(obj instanceof Unit) && !(obj instanceof Tower)) continue;
 
                             if (getDistance(this, obj) > this.pulseRadius) continue;
 
@@ -29891,8 +30383,6 @@ if (cardId === 'poison') {
                         if (obj.team === this.team || obj.health <= 0) continue;
 
                         if (!(obj instanceof Unit) && !(obj instanceof Tower)) continue;
-
-                        if (obj.isFlying) continue;
 
                         const dist = getDistance(this, obj);
 
@@ -30240,7 +30730,7 @@ if (cardId === 'poison') {
 
                     this.dirY = dirY / magnitude;
 
-                    this.maxDistance = Math.max(distance, WIDTH * 0.9, 320);
+                    this.maxDistance = Math.max(0, distance);
 
                     this.speed = speed;
 
@@ -30720,11 +31210,13 @@ if (cardId === 'poison') {
 
                                 }
 
-                            } else if (card.type === 'Building') {
+                    } else if (card.type === 'Building') {
 
-                                const newBuilding = new card.unitClass(spawnX, spawnY, 'ai', level);
+                        const newBuilding = new card.unitClass(spawnX, spawnY, 'ai', level);
 
-                                if (newBuilding instanceof GameObject) gameObjects.push(newBuilding);
+                        if (newBuilding instanceof GameObject) gameObjects.push(newBuilding);
+
+                        maybeTriggerChaosTroopSpawn(card, 'ai');
 
                             } else {
 
@@ -30757,6 +31249,8 @@ if (cardId === 'poison') {
                                     }
 
                                     gameObjects.push(newUnit);
+
+                                    maybeTriggerChaosTroopSpawn(card, 'ai');
 
                                 }
 
@@ -32490,11 +32984,9 @@ if (cardId === 'poison') {
 
                     const baseCycle = Math.max(1, cardDef.evo.cycle || 1);
 
-                    const requiredCycles = Math.max(0, baseCycle - 1);
-
                     const currentCount = playerEvoCycleCounts[cardId] || 0;
 
-                    if (currentCount >= requiredCycles) {
+                    if (currentCount >= baseCycle) {
 
                         evoSpawnThisUnit = true;
 
@@ -32618,6 +33110,8 @@ if (cardId === 'poison') {
 
                         recordLastCardPlay('player', cardId, level, evoSpawnThisUnit, card.cost);
 
+                        maybeTriggerChaosTroopSpawn(card, 'player');
+
                     }
 
                 } else {
@@ -32632,11 +33126,13 @@ if (cardId === 'poison') {
 
                         }
 
-                        gameObjects.push(newUnit);
+                    gameObjects.push(newUnit);
 
                     }
 
                     recordLastCardPlay('player', cardId, level, evoSpawnThisUnit, card.cost);
+
+                    maybeTriggerChaosTroopSpawn(card, 'player');
 
                 }
 
@@ -33338,20 +33834,54 @@ if (cardId === 'poison') {
         (function () {
             const leaveButton = document.getElementById('leaveSiteButton');
             let hasLeftSite = false;
+            let leaveSitePendingUnload = false;
+
             const leaveSite = () => {
                 if (hasLeftSite) return;
                 hasLeftSite = true;
                 // Use replace so the game page is not kept in history.
                 location.replace('https://google.com');
             };
+
+            const handleBeforeUnload = () => {
+                leaveSitePendingUnload = true;
+                leaveSite();
+            };
+
             if (leaveButton) {
                 leaveButton.addEventListener('click', leaveSite);
             }
-            window.addEventListener('beforeunload', leaveSite);
-            window.addEventListener('pagehide', leaveSite);
-            window.addEventListener('unload', leaveSite);
+
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('pagehide', () => {
+                leaveSitePendingUnload = true;
+                leaveSite();
+            });
+            window.addEventListener('unload', () => {
+                leaveSitePendingUnload = true;
+                leaveSite();
+            });
+
             document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'hidden') {
+                if (document.visibilityState === 'hidden' && !hasLeftSite) {
+                    leaveSitePendingUnload = true;
+                    leaveSite();
+                } else if (document.visibilityState === 'visible') {
+                    leaveSitePendingUnload = false;
+                }
+            });
+
+            const isTabCloseShortcut = (event) => {
+                const key = (event.key || '').toLowerCase();
+                if (key === 'w' && (event.ctrlKey || event.metaKey)) return true;
+                if (key === 'f4' && (event.ctrlKey || event.altKey || event.metaKey)) return true;
+                return false;
+            };
+            window.addEventListener('keydown', (event) => {
+                if (event.defaultPrevented) return;
+                if (isTabCloseShortcut(event)) {
+                    event.preventDefault();
+                    leaveSitePendingUnload = true;
                     leaveSite();
                 }
             });
@@ -33361,3 +33891,5 @@ if (cardId === 'poison') {
 </body>
 
 </html>
+
+
