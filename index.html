@@ -1002,6 +1002,21 @@
 
         }
 
+        /* NEW ARENA 20 STYLE */
+        canvas.arena-20 {
+
+            background-color: #030712;
+
+            background-image:
+
+                radial-gradient(circle at 25% 20%, rgba(59, 130, 246, 0.4), transparent 50%),
+
+                radial-gradient(circle at 75% 35%, rgba(14, 165, 233, 0.25), transparent 40%),
+
+                linear-gradient(135deg, #050a1d 0%, #040b1d 55%, #02030a 100%);
+
+        }
+
         /*
 
          * Slight 3D effect for the battlefield. Tilting the canvas and adding a box shadow
@@ -1722,6 +1737,10 @@
         .login-btn.google { background: linear-gradient(to bottom, #dc2626, #b91c1c); border-bottom-color: #7f1d1d; }
 
         .login-btn.guest { background: linear-gradient(to bottom, #6b7280, #4b5563); border-bottom-color: #374151; }
+
+        #restoreBrowserSaveLoginBtn.restore-ready { background: linear-gradient(to bottom, #22c55e, #0f766e); border-bottom-color: #0f766e; }
+
+        #restoreBrowserSaveLoginBtn:disabled { opacity: 0.7; cursor: not-allowed; }
 
         .cancel-btn { background: linear-gradient(to bottom, #ef4444, #dc2626) !important; border-bottom-color: #991b1b !important; }
 
@@ -3467,6 +3486,12 @@
 
         </button>
 
+        <button id="restoreBrowserSaveLoginBtn" class="login-btn guest mt-4 w-3/4 btn-shine" disabled>
+
+            Restore last browser save
+
+        </button>
+
         
 
         <!-- Google Sign-in (hidden for now, but logic exists) -->
@@ -4122,6 +4147,20 @@
 
                     </div>
 
+                    <div class="arena-card" style="--arena-card-gradient: linear-gradient(135deg, #a855f7, #312e81);">
+
+                        <span class="arena-emoji">🌠</span>
+
+                        <div>
+
+                            <h2 class="text-xl font-bold">Arena 20: Celestial Cascade</h2>
+
+                            <p class="text-yellow-300">4750+ Trophies 🌌</p>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
@@ -4233,6 +4272,8 @@
             <button id="debugArena18" class="debug-btn bg-purple-900 hover:bg-purple-800">Jump to Arena 18 (4250 🏆)</button>
 
             <button id="debugArena19" class="debug-btn bg-sky-700 hover:bg-sky-800">Jump to Arena 19 (4500 🏆)</button>
+
+            <button id="debugArena20" class="debug-btn bg-fuchsia-700 hover:bg-fuchsia-600">Jump to Arena 20 (4750 🏆)</button>
 
             <button id="debugUnlockAll" class="debug-btn bg-blue-600 hover:bg-blue-700">Unlock All Cards</button>
 
@@ -4670,9 +4711,9 @@
         <!-- Animated header with battle scene and update icons -->
 
         <div class="update-log-icons flex justify-center items-center space-x-2 text-3xl mb-2">
-            <span class="animate-bounce">⚡</span>
-            <span class="animate-ping">🪵</span>
-            <span class="animate-spin">✨</span>
+            <span class="animate-bounce">🌌</span>
+            <span class="animate-ping">✨</span>
+            <span class="animate-spin">🚀</span>
         </div>
 
   <h2 class="text-3xl font-bold mb-4">⚡ Emoji Royale Update Log ✨</h2>
@@ -5552,7 +5593,7 @@ const firebaseConfig = {
 
                 if (remaining <= 0) {
 
-                    cycleStore[cardId] = Math.max(0, baseCycles - 1);
+                    cycleStore[cardId] = 0;
 
                     return false;
 
@@ -5730,7 +5771,7 @@ const firebaseConfig = {
 
          */
 
-        const arenaFloors = { 0: "Arena 1: Emoji Valley", 250: "Arena 2: Laughing Village", 500: "Arena 3: Lava Town", 750: "Arena 4: The Farm", 1000: "Arena 5: Skull Kingdom", 1250: "Arena 6: Warlock's Workshop", 1500: "Arena 7: Mages Graveyard", 1750: "Arena 8: Chaos Canyon", 2000: "Arena 9: Titan's Peak", 2250: "Arena 10: Chaos Realm", 2500: "Arena 11: Diddy's Prison", 2750: "Arena 12: Mythic Arena", 3000: "Arena 13: Aqua Arena", 3250: "Arena 14: Forsaken Lands", 3500: "Arena 15: Buried Kingdom", 3750: "Arena 16: Mirror Plateau", 4000: "Arena 17: Celestial Citadel", 4250: "Arena 18: Nebula Nexus", 4500: "Arena 19: Stellar Observatory" };
+        const arenaFloors = { 0: "Arena 1: Emoji Valley", 250: "Arena 2: Laughing Village", 500: "Arena 3: Lava Town", 750: "Arena 4: The Farm", 1000: "Arena 5: Skull Kingdom", 1250: "Arena 6: Warlock's Workshop", 1500: "Arena 7: Mages Graveyard", 1750: "Arena 8: Chaos Canyon", 2000: "Arena 9: Titan's Peak", 2250: "Arena 10: Chaos Realm", 2500: "Arena 11: Diddy's Prison", 2750: "Arena 12: Mythic Arena", 3000: "Arena 13: Aqua Arena", 3250: "Arena 14: Forsaken Lands", 3500: "Arena 15: Buried Kingdom", 3750: "Arena 16: Mirror Plateau", 4000: "Arena 17: Celestial Citadel", 4250: "Arena 18: Nebula Nexus", 4500: "Arena 19: Stellar Observatory", 4750: "Arena 20: Celestial Cascade" };
 
         const sortedArenaFloors = Object.keys(arenaFloors).map(Number).sort((a, b) => a - b);
 
@@ -7216,6 +7257,8 @@ const firebaseConfig = {
 
             const debugArena19 = document.getElementById('debugArena19');
 
+            const debugArena20 = document.getElementById('debugArena20');
+
             const debugUnlockAll = document.getElementById('debugUnlockAll');
 
             const debugUpgradeAll = document.getElementById('debugUpgradeAll');
@@ -7253,6 +7296,8 @@ const firebaseConfig = {
             const saveKeyOutput = document.getElementById('saveKeyOutput');
 
             const saveDataCancel = document.getElementById('saveDataCancel');
+
+            const restoreBrowserSaveLoginBtn = document.getElementById('restoreBrowserSaveLoginBtn');
 
             const loadKeyBtn = document.getElementById('loadKeyBtn');
 
@@ -7607,6 +7652,32 @@ const firebaseConfig = {
             function displayUpdateLogContent() {
 
             const updates = [
+
+                    { date: '12/23/2025', title: 'Celestial Cascade & Cosmic Troops', items: [
+
+                        '🌌 Arena 20: Celestial Cascade stretches auroras over each lane so the preview now renders both bridges while the camera scrolls in real time.',
+
+                        '⚡ Starline Corsair (Win Condition, 4 elixir) now rides a single sparkling projectile across the bridge before reforming so the camera follows it without extra bolts.',
+
+                        '🔶 Prism Vanguard (Troop) charges with a burst of geometric shards, spawning agile tracer drones that keep pressure on whichever lane you choose.',
+
+                        '🌀 Nebula Drift (Troop) ejects dual micro-cores that drift toward buildings, splitting into sentinels that chase towers while the mothership stays safe.',
+
+                        '🌠 Starlight Marauder (Troop) leaps from wall to wall, trading ranged burst damage for precise control and dragging nearby troops toward its beam.',
+
+                        '🛡️ Astral Bastion (Troop) anchors near the bridge and radiates defensive pulses, buffing allies while only shifting toward towers when both sides are quiet.'
+
+                    ]},
+
+                    { date: '12/22/2025', title: 'Persistent Playfield', items: [
+
+                        '✨ Auto-save now keeps your decks, trophies, coins, and arena progress fresh every few seconds so you can pick up where you left off.',
+
+                        '🚀 Restore last browser save lives on the login screen—tap it anytime to bounce back into the very last session.',
+
+                        '🗝️ Manual save keys still work, but the browser now offers a quick, up-to-the-moment backup right where you start the game.'
+
+                    ]},
 
                     { date: '12/19/2025', title: 'Chaos Works Awakening', items: [
 
@@ -8657,6 +8728,10 @@ const firebaseConfig = {
 
                 initGuestSession(); // Load default data, disable saving
 
+                allowBrowserSaveOverwrite();
+
+                persistBrowserSave(true);
+
                 showScreen('loading');
 
                 loadingScreen.querySelector('p').textContent = 'Starting Guest Game...';
@@ -8673,19 +8748,9 @@ const firebaseConfig = {
 
             // --- NEW: Save/Load Key Logic ---
 
-            if (saveDataBtn) saveDataBtn.addEventListener('click', () => {
+            function buildSavePayload() {
 
-                if (saveKeyOutput) saveKeyOutput.value = "Generating key...";
-
-                if (generateKeyBtn) generateKeyBtn.disabled = true;
-
-                if (generateKeyBtn) generateKeyBtn.textContent = 'Generate New Key (30s)';
-
-                if (saveDataOverlay) saveDataOverlay.style.display = 'flex';
-
-                // Generate key
-
-                const dataToSave = {
+                return {
 
                     trophies,
 
@@ -8725,13 +8790,29 @@ const firebaseConfig = {
 
                     evolutionsUnlocked,
 
-                        evolutionShards,
+                    evolutionShards,
 
-                        evoUnlockedCards,
+                    evoUnlockedCards,
 
-                        saveKeyVersion: SAVE_KEY_VERSION
+                    saveKeyVersion: SAVE_KEY_VERSION
 
                 };
+
+            }
+
+            if (saveDataBtn) saveDataBtn.addEventListener('click', () => {
+
+                if (saveKeyOutput) saveKeyOutput.value = "Generating key...";
+
+                if (generateKeyBtn) generateKeyBtn.disabled = true;
+
+                if (generateKeyBtn) generateKeyBtn.textContent = 'Generate New Key (30s)';
+
+                if (saveDataOverlay) saveDataOverlay.style.display = 'flex';
+
+                // Generate key
+
+                const dataToSave = buildSavePayload();
 
                 const jsonString = JSON.stringify(dataToSave);
 
@@ -8767,6 +8848,140 @@ const firebaseConfig = {
 
             });
 
+            const BROWSER_SAVE_STORAGE_KEY = 'emojiRoyaleBrowserSaveData';
+
+            const BROWSER_SAVE_INTERVAL_MS = 3000;
+
+            let browserAutoSaveIntervalId = null;
+
+            let lastBrowserSaveSnapshot = '';
+
+            let browserSaveNeedsPreserve = false;
+
+            function getBrowserSaveWrapper() {
+
+                if (typeof localStorage === 'undefined') return null;
+
+                try {
+
+                    const stored = localStorage.getItem(BROWSER_SAVE_STORAGE_KEY);
+
+                    if (!stored) return null;
+
+                    return JSON.parse(stored);
+
+                } catch (error) {
+
+                    console.warn('Failed to load browser save data', error);
+
+                    return null;
+
+                }
+
+            }
+
+            function updateBrowserRestoreButtonState() {
+
+                if (!restoreBrowserSaveLoginBtn) return;
+
+                const wrapper = getBrowserSaveWrapper();
+
+                const hasBrowserSave = !!(wrapper && wrapper.payload);
+
+                const titleText = hasBrowserSave && wrapper && wrapper.savedAt
+
+                    ? `Last browser save: ${new Date(wrapper.savedAt).toLocaleString()}`
+
+                    : 'Auto-saving is initializing.';
+
+                restoreBrowserSaveLoginBtn.disabled = !hasBrowserSave;
+
+                restoreBrowserSaveLoginBtn.classList.toggle('restore-ready', hasBrowserSave);
+
+                restoreBrowserSaveLoginBtn.title = titleText;
+
+            }
+
+            function persistBrowserSave(force = false) {
+
+                if (typeof localStorage === 'undefined') return;
+
+                if (browserSaveNeedsPreserve && !force) return;
+
+                try {
+
+                    const payload = buildSavePayload();
+
+                    const snapshot = JSON.stringify(payload);
+
+                    if (!force && snapshot === lastBrowserSaveSnapshot) return;
+
+                    const wrapper = {
+
+                        payload,
+
+                        savedAt: Date.now()
+
+                    };
+
+                    localStorage.setItem(BROWSER_SAVE_STORAGE_KEY, JSON.stringify(wrapper));
+
+                    lastBrowserSaveSnapshot = snapshot;
+
+                    browserSaveNeedsPreserve = false;
+
+                    updateBrowserRestoreButtonState();
+
+                } catch (error) {
+
+                    console.warn('Browser auto-save failed', error);
+
+                }
+
+            }
+
+            function allowBrowserSaveOverwrite() {
+
+                browserSaveNeedsPreserve = false;
+
+            }
+
+            function startBrowserAutoSave() {
+
+                if (browserAutoSaveIntervalId) return;
+
+                browserSaveNeedsPreserve = !!getBrowserSaveWrapper();
+
+                persistBrowserSave();
+
+                browserAutoSaveIntervalId = setInterval(() => persistBrowserSave(), BROWSER_SAVE_INTERVAL_MS);
+
+            }
+
+            async function restoreBrowserSave() {
+
+                const wrapper = getBrowserSaveWrapper();
+
+                if (!wrapper || !wrapper.payload) return;
+
+                initGuestSession();
+
+                try {
+
+                    await loadUserData(wrapper.payload);
+
+                    finishGuestLoadFlow();
+
+                } catch (error) {
+
+                    console.error("Failed to restore browser save:", error);
+
+                    alert('Unable to restore the auto-save. Please try again or load a manual save key.');
+
+                }
+
+            }
+
             if (saveDataCancel) saveDataCancel.addEventListener('click', () => {
 
                 if (saveDataOverlay) saveDataOverlay.style.display = 'none';
@@ -8784,6 +8999,12 @@ const firebaseConfig = {
                 // Re-generate key and start cooldown
 
                 if (saveDataBtn) saveDataBtn.click(); // Just re-click the main button
+
+            });
+
+            if (restoreBrowserSaveLoginBtn) restoreBrowserSaveLoginBtn.addEventListener('click', async () => {
+
+                await restoreBrowserSave();
 
             });
 
@@ -8806,6 +9027,32 @@ const firebaseConfig = {
                 loadDataOverlay.style.display = 'none';
 
             });
+
+            function finishGuestLoadFlow() {
+
+                if (loadDataOverlay) loadDataOverlay.style.display = 'none';
+
+                if (typeof showScreen === 'function') showScreen('loading');
+
+                if (loadingScreen) {
+
+                    const loadingText = loadingScreen.querySelector('p');
+
+                    if (loadingText) loadingText.textContent = 'Loading Progress...';
+
+                }
+
+                enableMenuAnnouncements();
+
+                setTimeout(() => showScreen('menu'), 1000);
+
+                if (typeof persistBrowserSave === 'function') {
+
+                    persistBrowserSave(true);
+
+                }
+
+            }
 
             // --- Mode Selector Logic ---
 
@@ -9121,19 +9368,7 @@ const firebaseConfig = {
 
                     await loadUserData(parsedData); 
 
-                    loadDataOverlay.style.display = 'none';
-
-                    showScreen('loading');
-
-                    loadingScreen.querySelector('p').textContent = 'Loading Progress...';
-
-                    enableMenuAnnouncements();
-
-                    setTimeout(() => {
-
-                        showScreen('menu');
-
-                    }, 1000);
+                    finishGuestLoadFlow();
 
                 } catch (error) {
 
@@ -9406,6 +9641,12 @@ const firebaseConfig = {
                     emoji = "\u2728";
 
                     currentArenaTheme = 'arena-19';
+
+                } else if (arenaDisplayName.includes("Celestial Cascade")) {
+
+                    emoji = "🌠";
+
+                    currentArenaTheme = 'arena-20';
 
                 } else if (arenaDisplayName.includes("Aqua Arena")) {
 
@@ -12145,6 +12386,24 @@ if (chestCloseButton) {
 
                 }
 
+                if (debugArena20) {
+
+                    debugArena20.onclick = null;
+
+                    debugArena20.onclick = () => {
+
+                        trophies = 4750;
+
+                        updateArena();
+
+                        saveUserData();
+
+                        showScreen('menu');
+
+                    };
+
+                }
+
                 if (debugUnlockAll) {
 
                     debugUnlockAll.onclick = null;
@@ -13539,9 +13798,47 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
             let previewCameraY = 0;
 
+            let previewCameraX = 0;
+
+            let previewLaneShiftValue = 0;
+
+            let previewCameraStartLeft = 0;
+
+            let previewCameraStartRight = 0;
+
+            let previewStarlinePhaseActive = false;
+
+            let previewStarlinePhaseLane = 'left';
+
+            let previewStarlinePhaseX = null;
+
+            const previewCameraFollowHalfWidth = 150;
+
             const previewCanvas = document.getElementById('cardPreviewCanvas');
 
             const previewCtx = previewCanvas.getContext('2d');
+
+            function updatePreviewCameraForStarline(sceneWidth) {
+
+                if (!previewStarlinePhaseActive || typeof previewStarlinePhaseX !== 'number') return;
+
+                const maxOffset = Math.max(0, sceneWidth - 300);
+
+                const desiredX = Math.max(0, Math.min(maxOffset, previewStarlinePhaseX - previewCameraFollowHalfWidth));
+
+                previewCameraX = desiredX;
+
+            }
+
+            function resetPreviewStarlinePhaseState() {
+
+                previewStarlinePhaseActive = false;
+
+                previewStarlinePhaseLane = 'left';
+
+                previewStarlinePhaseX = null;
+
+            }
 
             // Stores the original stats HTML for the card modal so that
 
@@ -13884,7 +14181,9 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
                 cardInfoName.textContent = card.name;
 
-                cardInfoType.textContent = card.type || 'Special';
+                const cardTypeLabel = card.type === 'WinCon' ? 'Win Condition' : (card.type || 'Special');
+
+                cardInfoType.textContent = cardTypeLabel;
 
                 const unlockText = card.arena ? `Unlocks in Arena ${card.arena}` : 'Locked';
 
@@ -13914,6 +14213,11 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
                     if (stats.damage && stats.hitSpeed) { const dps = (stats.damage / stats.hitSpeed).toFixed(1); cardInfoStats.innerHTML += `<div>DPS: <span>${dps}</span></div>`; }
 
+                }
+
+                if (card.type === 'WinCon') {
+                    cardInfoStats.innerHTML += `<div class='mt-2 font-bold text-yellow-300'>Win Condition</div>`;
+                    cardInfoStats.innerHTML += `<div>Charges directly at enemy towers and ignores other troops.</div>`;
                 }
 
                 // Save the generated normal stats HTML so it can be restored when toggling evolution off
@@ -13967,6 +14271,92 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
                         cardInfoStats.innerHTML += `<div>Mini HP: <span>${miniStats.health}</span></div>`;
 
                     }
+
+                }
+
+                if (cardId === 'prismVanguard') {
+
+                    const splitStats = stats || (card.stats && card.stats[1]) || {};
+
+                    const shardCount = splitStats.splitCount || 3;
+
+                    const shardDamage = splitStats.splitDamage || '-';
+
+                    const shardRange = splitStats.splitRange || '-';
+
+                    cardInfoStats.innerHTML += `<div class='mt-2 font-bold text-yellow-300'>Shard Split</div>`;
+
+                    cardInfoStats.innerHTML += `<div>Shard Count: <span>${shardCount}</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Shard Damage: <span>${shardDamage}</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Shard Range: <span>${shardRange}</span></div>`;
+
+                    if (card.splitCooldown) {
+
+                        cardInfoStats.innerHTML += `<div>Shard Delay: <span>${(card.splitCooldown / 60).toFixed(1)}s</span></div>`;
+
+                    }
+
+                }
+
+                if (cardId === 'nebulaDrift') {
+
+                    const splitStats = stats || (card.stats && card.stats[1]) || {};
+
+                    const triggerThreshold = splitStats.splitThreshold != null ? Math.round(splitStats.splitThreshold * 100) : '-';
+
+                    const splashRange = splitStats.splitSplashRange || '-';
+
+                    const splashDamage = splitStats.splitSplashDamage || '-';
+
+                    cardInfoStats.innerHTML += `<div class='mt-2 font-bold text-yellow-300'>Nebula Dart Burst</div>`;
+
+                    cardInfoStats.innerHTML += `<div>Split Count: <span>${splitStats.splitCount || 2}</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Split Damage: <span>${splitStats.splitDamage || 60}</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Split Speed: <span>${splitStats.splitSpeed || '-'}</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Trigger Range: <span>${splitStats.splitRange || 30}</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Trigger Threshold: <span>${triggerThreshold === '-' ? '-' : triggerThreshold + '%'} </span></div>`;
+
+                    cardInfoStats.innerHTML += `<div class='mt-2 font-bold text-yellow-300'>Dart Splash</div>`;
+
+                    cardInfoStats.innerHTML += `<div>Splash Damage: <span>${splashDamage}</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Splash Radius: <span>${splashRange}</span></div>`;
+
+                }
+
+                if (cardId === 'starlineCorsair') {
+
+                    cardInfoStats.innerHTML += `<div class='mt-2 font-bold text-yellow-300'>Chain Bolts</div>`;
+
+                    const chainCd = card.chainCooldown || 140;
+
+                    cardInfoStats.innerHTML += `<div>Chain Cooldown: <span>${(chainCd / 60).toFixed(1)}s</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div class='mt-2 font-bold text-yellow-300'>Lane Switch</div>`;
+
+                    cardInfoStats.innerHTML += `<div>Switch Threshold: <span>${card.laneSwitchThreshold || 2} troops</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Search Radius: <span>${card.laneSwitchRange || 70}</span></div>`;
+
+                }
+
+                if (cardId === 'astralBastion') {
+
+                    const pulseStats = stats || (card.stats && card.stats[1]) || {};
+
+                    cardInfoStats.innerHTML += `<div class='mt-2 font-bold text-yellow-300'>Tower Pulse</div>`;
+
+                    cardInfoStats.innerHTML += `<div>Pulse Damage: <span>${pulseStats.pulseDamage || '-'}</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Pulse Interval: <span>${pulseStats.pulseInterval || '-'}s</span></div>`;
+
+                    cardInfoStats.innerHTML += `<div>Buff Radius: <span>${pulseStats.buffRadius || '-'}</span></div>`;
 
                 }
 
@@ -14782,9 +15172,74 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
                 previewSimulationObjects = [];
 
+                resetPreviewStarlinePhaseState();
+
                 isPreviewActive = true;
 
                 previewSpellTimer = 0;
+
+                previewCameraX = 0;
+
+                previewCameraY = 0;
+
+                const previewViewOffset = 120;
+
+                const leftCameraStart = Math.max(0, LANE_LEFT_X - previewViewOffset);
+
+                const rightCameraStart = Math.max(0, LANE_RIGHT_X - previewViewOffset);
+
+                const previewLaneShift = Math.max(0, rightCameraStart - leftCameraStart);
+
+                previewCameraStartLeft = leftCameraStart;
+
+                previewCameraStartRight = rightCameraStart;
+
+                previewLaneShiftValue = previewLaneShift;
+
+                previewCameraX = previewCameraStartLeft;
+
+                if (typeof window !== 'undefined') {
+
+                    window.onStarlineLaneSwitch = (laneKey) => {
+
+                        previewStarlinePhaseLane = laneKey;
+
+                    };
+
+                    window.onStarlinePhaseStart = (laneKey) => {
+
+                        previewStarlinePhaseActive = true;
+
+                        previewStarlinePhaseLane = laneKey;
+
+                        previewStarlinePhaseX = null;
+
+
+                    };
+
+                    window.onStarlinePhaseUpdate = (x, y, laneKey) => {
+
+                        previewStarlinePhaseActive = true;
+
+                        if (laneKey) previewStarlinePhaseLane = laneKey;
+
+                        previewStarlinePhaseX = x;
+
+
+                    };
+
+                    window.onStarlinePhaseComplete = (laneKey) => {
+
+                        previewStarlinePhaseActive = false;
+
+                        previewStarlinePhaseX = null;
+
+                        if (laneKey) previewStarlinePhaseLane = laneKey;
+
+
+                    };
+
+                }
 
                 let previewOpponentSpellTimer = 0;
 
@@ -14842,11 +15297,15 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
                 // Blue Princess (Bottom) - Use selected tower type if previewing tower
 
-                previewSimulationObjects.push(new Tower(130, 180, 'player', false, 10, false, playerTowerType));
+                const lanePositions = [LANE_LEFT_X, LANE_RIGHT_X];
 
-                // Red Princess (Top)
+                const playerTowers = lanePositions.map(x => new Tower(x, 180, 'player', false, 10, false, playerTowerType));
 
-                previewSimulationObjects.push(new Tower(130, 20, 'ai', false, 10));
+                const aiTowers = lanePositions.map(x => new Tower(x, 20, 'ai', false, 10));
+
+                playerTowers.forEach(t => previewSimulationObjects.push(t));
+
+                aiTowers.forEach(t => previewSimulationObjects.push(t));
 
                 
 
@@ -14864,7 +15323,7 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
                 }
 
-                const spawnX = 130;
+                const spawnX = LANE_LEFT_X;
 
                 const blueSpawnY = 140;
 
@@ -15132,33 +15591,44 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
                     ctx.clearRect(0, 0, 300, 200);
 
+                    const previewSceneWidth = 300 + Math.max(previewLaneShiftValue, 0);
+
+                    updatePreviewCameraForStarline(previewSceneWidth);
+
                     ctx.save();
 
-                    ctx.translate(0, -previewCameraY);
+                    ctx.translate(-previewCameraX, -previewCameraY);
 
                     
 
                     // --- Draw Arena 1 Background (Extended for Scrolling) ---
 
                     ctx.fillStyle = '#15803d'; // Green Grass
-
-                    ctx.fillRect(0, 0, 300, 400); // Taller for scroll
-
-                    
-
-                    // River
+                    ctx.fillRect(0, 0, previewSceneWidth, 400); // Taller for scroll
 
                     ctx.fillStyle = '#3b82f6'; // Blue River
 
-                    ctx.fillRect(0, 90, 300, 20);
+                    const previewRiverY = 90;
 
-                    
+                    ctx.fillRect(0, previewRiverY, previewSceneWidth, 20);
 
-                    // Bridge
+                    const bridgeWidth = 40;
 
-                    ctx.fillStyle = '#a16207'; // Brown
+                    const bridgeHeight = 20;
 
-                    ctx.fillRect(115, 85, 30, 30);
+                    const drawBridge = (centerX) => {
+
+                        ctx.fillStyle = '#a16207';
+
+                        const previewBridgeY = previewRiverY + 10;
+
+                        ctx.fillRect(centerX - bridgeWidth / 2, previewBridgeY - bridgeHeight / 2, bridgeWidth, bridgeHeight);
+
+                    };
+
+                    drawBridge(LANE_LEFT_X);
+
+                    drawBridge(LANE_RIGHT_X);
 
                     // Swap Globals for Logic Update
 
@@ -15256,9 +15726,17 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
                                  else if (currentPreviewOpponentId === 'skeletonYard') gameObjects.push(new SkeletonYard(tx, ty, 'ai', s.duration, opponent.radius, 10));
 
-                                 else if (currentPreviewOpponentId === 'tornado') gameObjects.push(new TornadoSpell(tx, ty, 'ai', opponent.radius, s.duration, s.pullStrength, s.damagePerSecond, opponent.emoji));
+                                  else if (currentPreviewOpponentId === 'tornado') gameObjects.push(new TornadoSpell(tx, ty, 'ai', opponent.radius, s.duration, s.pullStrength, s.damagePerSecond, opponent.emoji));
 
-                                 else {
+                                  else if (currentPreviewOpponentId === 'bigStick') {
+
+                                      const stickX = spawnX || 130;
+
+                                      const stickY = BRIDGE_Y - 8;
+
+                                      spawnSpellForCard('bigStick', 'ai', level, stickX, stickY);
+
+                                  } else {
 
                                      const isEvoSpell = previewListEvoOnly && evolutionsUnlocked && opponent.evo;
 
@@ -15352,8 +15830,6 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
 
                         gameObjects = globalGameObjects;
 
-                        isPreviewSimulationActive = false;
-
                         // Removed redundant `ctx = mainCtx;` as it's handled once outside the finally block.
 
                     }
@@ -15361,6 +15837,8 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
                     // Draw All
 
                     previewSimulationObjects.forEach(o => o.draw());
+
+                    isPreviewSimulationActive = false;
 
                     
 
@@ -15503,6 +15981,30 @@ function getUnlockedCards(includeTower = false, aiLevel = 0, mode = gameMode) {
                     ctx = mainCtx;
 
                 }
+
+                previewCameraY = 0;
+
+                previewCameraX = 0;
+
+                if (typeof window !== 'undefined') {
+
+                    window.onStarlineLaneSwitch = null;
+
+                    window.onStarlinePhaseStart = null;
+
+                    window.onStarlinePhaseUpdate = null;
+
+                    window.onStarlinePhaseComplete = null;
+
+                }
+
+                previewLaneShiftValue = 0;
+
+                previewCameraStartLeft = 0;
+
+                previewCameraStartRight = 0;
+
+                resetPreviewStarlinePhaseState();
 
             }
 
@@ -16741,9 +17243,9 @@ function getDeckForMode(mode = gameMode) {
 
                 }
 
-                draw() {
+                draw() { 
 
-                    ctx.save();
+                    ctx.save(); 
 
                     ctx.globalAlpha = this.timer / 20;
 
@@ -17436,8 +17938,6 @@ update() {
                 draw() { 
 
                     ctx.save(); 
-
-                    
 
                     // Enhanced Tower Visuals
 
@@ -18142,6 +18642,15 @@ update() {
                     }
                 }
 
+                // Keep units within the arena bounds.
+                const radiusLimit = Math.max(0, this.radius || 0);
+                const minX = radiusLimit;
+                const maxX = Math.max(minX, WIDTH - radiusLimit);
+                const minY = radiusLimit;
+                const maxY = Math.max(minY, HEIGHT - radiusLimit);
+                this.x = Math.max(minX, Math.min(this.x, maxX));
+                this.y = Math.max(minY, Math.min(this.y, maxY));
+
             }
 
                 findClosestEnemyInRange(range = 200) {
@@ -18242,13 +18751,25 @@ update() {
 
                             if (this.isEvolved && this instanceof Skeleton) {
 
-                                // Count skeletons on this team
+                                const groupId = this.skeletonGroupId;
+
+                                const trackingGroup = groupId !== undefined && groupId !== null;
+
+                                // Count skeletons on this team (limit per group when available)
 
                                 let count = 0;
 
                                 for (const obj of gameObjects) {
 
-                                    if (obj instanceof Skeleton && obj.team === this.team) count++;
+                                    if (obj instanceof Skeleton && obj.team === this.team) {
+
+                                        if (!trackingGroup || obj.skeletonGroupId === groupId) {
+
+                                            count++;
+
+                                        }
+
+                                    }
 
                                 }
 
@@ -18259,6 +18780,8 @@ update() {
                                     try {
 
                                         const newSkel = new Skeleton(this.x + (Math.random() * 10 - 5), this.y + (Math.random() * 10 - 5), this.team, this.level);
+
+                                        if (trackingGroup) newSkel.skeletonGroupId = groupId;
 
                                         newSkel.isEvolved = true;
 
@@ -18882,8 +19405,6 @@ update() {
 
             function spawnMarkedZombie(deadUnit) {
 
-                if (isPreviewActive) return;
-
                 if (!deadUnit || !deadUnit._zombieMark) return;
 
                 const mark = deadUnit._zombieMark;
@@ -19122,6 +19643,8 @@ update() {
 
             class TinyBot extends Unit { constructor(x, y, team, level = 1) { const s = allCards['tinyBot'].stats[level]; super(x, y, 10, team, s.health, 1.0, 25, s.damage, s.hitSpeed, '🤖', false, false, level, allCards['tinyBot'].aggroRange); } } // Speed 1.2 -> 1.0
 
+            let nextSkeletonGroupId = 1;
+
             class Goblins { constructor(x, y, team, level = 1) {
 
                 const s = allCards['goblins'].stats[level];
@@ -19152,9 +19675,13 @@ update() {
 
                 const s = allCards['skeletons'].stats[level];
 
+                const groupId = nextSkeletonGroupId++;
+
                 for (let i = 0; i < s.count; i++) {
 
                     const sk = new Skeleton(x + Math.random()*10 - 5, y + Math.random()*10 - 5, team, level);
+
+                    sk.skeletonGroupId = groupId;
 
                     try {
 
@@ -26475,13 +27002,15 @@ class Projectile extends GameObject {
 
                                 stats: { 1: { damage: 160, distance: 280, speed: 2.6, pushDistance: 32, hitRadius: 28 } },
 
-                                desc: 'Rolls from the bridge across the lane, cleaving ground troops, towers, and buildings until the log splinters mid-path.' },
+                                desc: 'Rolls straight from the bridge along the ground lane, cleaving troops, towers, and buildings while ignoring flying threats until the log splinters mid-path.' },
+
 
                     'zapTesla': { name: 'Zap Tesla', cost: 5, emoji: '⚡', type: 'Building', unitClass: ZapTesla, placementRadius: 18, isFlying: false, arena: 18, targets: '-',
 
                                 stats: { 1: { health: 1050, lifetime: '30s', spawn_speed: '0s', zapRange: 140, zapInterval: 0.6, zapDamage: 68, pushDistance: 16 } },
 
                                 desc: 'Burrows underground, shows its range circle, and zaps the first ground troop before hiding again.' },
+
 
                     'nebulaSentinel': { name: 'Nebula Sentinel', cost: 5, emoji: '🌠', type: 'Ranged', unitClass: NebulaSentinel, placementRadius: 12, isFlying: false, arena: 18, targets: 'Air & Ground', aggroRange: 150,
 
@@ -26499,11 +27028,13 @@ class Projectile extends GameObject {
 
                                 desc: 'Sends pulsed beams into the lane, knocking aside ground troops.' },
 
+
                     'prismLattice': { name: 'Prism Lattice', cost: 4, emoji: '💠', type: 'Building', unitClass: PrismLattice, placementRadius: 20, isFlying: false, arena: 19, targets: '-',
 
                                 stats: { 1: { health: 1100, lifetime: '32s', spawn_speed: '0s', pulseRadius: 92, pulseInterval: 0.7, pulseDamage: 42, pushDistance: 14 } },
 
                                 desc: 'Anchors a radiant lattice that pulses and nudges ground troops back as it decays.' },
+
 
 'bulletGoblin': { name: 'Bullet Goblin', cost: 3, emoji: '🔫👺', type: 'Ranged', unitClass: BulletGoblin, placementRadius: 10, isFlying: false, arena: 19, targets: 'Air & Ground', aggroRange: 160,
 
@@ -26511,24 +27042,64 @@ class Projectile extends GameObject {
 
                                 desc: 'Sprays low-damage projectiles faster than most goblins, chipping ground mobs before they can close.' },
 
+
                     
-                    'starSwarm': { name: 'Star Swarm', cost: 3, emoji: '✨', type: 'Swarm', unitClass: StarSwarm, placementRadius: 14, isFlying: false, arena: 20, targets: 'Ground', aggroRange: 120,
+                    'starSwarm': { name: 'Star Swarm', cost: 3, emoji: '✨', type: 'Swarm', unitClass: StarSwarm, placementRadius: 14, isFlying: false, arena: 19, targets: 'Ground', aggroRange: 120,
 
                                 stats: { 1: { count: 3, health: 120, damage: 16, hitSpeed: 1.2, speed: 1.05, attackRange: 26 } },
 
                                 desc: 'A hesitant pack of spark sprites that chip at nearby ground units.' },
 
-                    'novaPulse': { name: 'Nova Pulse', cost: 4, emoji: '🌌', type: 'Spell', radius: 90, placementRadius: 90, arena: 20, targets: 'Ground',
+
+                    'novaPulse': { name: 'Nova Pulse', cost: 4, emoji: '🌌', type: 'Spell', radius: 90, placementRadius: 90, arena: 19, targets: 'Ground',
 
                                 stats: { 1: { damage: 130, pulses: 3, pulseInterval: 0.55, radius: 90 } },
 
                                 desc: 'Unleashes radiating pulses that damage and stagger every ground troop caught inside.' },
 
-                    'echoRift': { name: 'Echo Rift', cost: 5, emoji: '🌀', type: 'Building', unitClass: EchoRift, placementRadius: 18, isFlying: false, arena: 20, targets: '-',
+
+                    'echoRift': { name: 'Echo Rift', cost: 5, emoji: '🌀', type: 'Building', unitClass: EchoRift, placementRadius: 18, isFlying: false, arena: 19, targets: '-',
 
                                 stats: { 1: { health: 1200, lifetime: '28s', spawn_speed: '0s', pulseDamage: 24, pulseRadius: 92, pulseInterval: 1.4, slowPercent: 0.35, slowDuration: 1.2 } },
 
                                 desc: 'Anchors a shimmering rift that pulses damage and slows ground troops in sync with the lane.' },
+
+
+                    'prismVanguard': { name: 'Prism Vanguard', cost: 5, emoji: '🗡️✨', type: 'WinCon', unitClass: PrismVanguard, placementRadius: 12, isFlying: false, arena: 20, targets: 'Buildings', aggroRange: 120,
+
+                                stats: { 1: { health: 820, damage: 104, hitSpeed: 1.45, speed: 0.92, attackRange: 18, splitCount: 3, splitDamage: 38, splitRange: 34 } },
+
+                                splitCooldown: 150,
+
+                                desc: 'A calibrated breach runner that charges towers, letting off modest ground shards as it hits while ignoring everything else.' },
+
+
+                    'nebulaDrift': { name: 'Nebula Drift', cost: 5, emoji: '🌊🚀', type: 'WinCon', unitClass: NebulaDrift, placementRadius: 12, isFlying: false, arena: 20, targets: 'Buildings', aggroRange: 120,
+
+                                stats: { 1: { health: 820, damage: 118, hitSpeed: 1.6, speed: 0.98, attackRange: 22, splitCount: 3, splitDamage: 84, splitSpeed: 1.6, splitRange: 52, splitThreshold: 0.75, splitSplashRange: 54, splitSplashDamage: 44 } },
+
+                                desc: 'The hull fierces toward towers, then ruptures near buildings and fires nebula darts that slam the primary structure while splashing distant towers.' },
+
+
+                    'starlineCorsair': { name: 'Starline Corsair', cost: 4, emoji: '🌟⚡', type: 'WinCon', unitClass: StarlineCorsair, placementRadius: 12, isFlying: false, arena: 20, targets: 'Buildings', aggroRange: 140,
+
+                                stats: { 1: { health: 640, damage: 95, hitSpeed: 1.35, speed: 0.98, attackRange: 108, bonusSpeed: 1.4 } },
+
+                                chainCooldown: 140,
+
+                                laneSwitchThreshold: 2,
+
+                                laneSwitchRange: 70,
+
+                                desc: 'A twin-sailed prow that only fires at towers, rerouting once to the quieter lane when enemy troops pile up and firing focused chains toward the new structure.' },
+
+
+                    'astralBastion': { name: 'Astral Bastion', cost: 6, emoji: '🌌🧭', type: 'WinCon', unitClass: AstralBastion, placementRadius: 14, isFlying: false, arena: 20, targets: 'Buildings', aggroRange: 160,
+
+                                stats: { 1: { health: 700, damage: 90, hitSpeed: 1.5, speed: 0.82, attackRange: 96, pulseDamage: 42, pulseInterval: 3.0, buffRadius: 70 } },
+
+                                desc: 'A cascading prow that pulses burning light while trudging toward towers and buffs nearby ground allies.' },
+
 'tower': { name: 'Tower Upgrade', emoji: '👑' }
 
                 };
@@ -27633,6 +28204,10 @@ class Projectile extends GameObject {
 
                     ctx.fillStyle = '#020616'; // Observatory dusk
 
+                } else if (currentArenaTheme === 'arena-20') {
+
+                    ctx.fillStyle = '#050513'; // Celestial Cascade mist
+
                 } else if (currentArenaTheme === 'arena-12') {
 
                     ctx.fillStyle = '#0b1220'; // Mythic river
@@ -28439,7 +29014,9 @@ function getHighestDeckCardLevel(mode = gameMode) {
 
                 return unit instanceof PigJockey || unit instanceof MegaSmasher || unit instanceof HorseRider || unit instanceof Pigs
 
-                    || unit instanceof ElixirGiant || unit instanceof ElixirGiantMini || unit instanceof ElixirGiantShard || unit instanceof Rotter;
+                    || unit instanceof ElixirGiant || unit instanceof ElixirGiantMini || unit instanceof ElixirGiantShard || unit instanceof Rotter
+
+                    || unit instanceof PrismVanguard || unit instanceof NebulaDrift || unit instanceof StarlineCorsair || unit instanceof AstralBastion;
 
             }
 
@@ -30450,6 +31027,689 @@ if (cardId === 'poison') {
 
             }
 
+            class PrismShard extends Unit {
+
+                constructor(x, y, team, level = 1) {
+
+                    super(x, y, 6, team, 150, 1.6, 12, 45, 1.0, '\u2728', false, false, level, 80);
+
+
+                    this.lifeSpan = 70;
+
+                }
+
+                update() {
+
+                    super.update();
+
+                    this.lifeSpan -= deltaTime * 60;
+
+                    if (this.lifeSpan <= 0) {
+
+                        this.health = 0;
+
+                    }
+
+                }
+
+            }
+
+            class PrismVanguard extends Unit {
+
+                constructor(x, y, team, level = 1) {
+
+                    const template = allCards['prismVanguard'];
+
+                    const stats = template.stats[level] || template.stats[1];
+
+                                        const emoji = template.emoji || '\U0001F5E1\uFE0F\U00002728';
+
+
+                    super(x, y, 12, team, stats.health, stats.speed, stats.attackRange || 18, stats.damage, stats.hitSpeed, emoji, false, false, level, template.aggroRange || 120);
+
+                    this.isWinCondition = true;
+                    this.ignoresTroops = true;
+
+                    this.shardTimer = 0;
+
+                    this.shardCooldown = 120;
+
+                    this.shardCount = stats.splitCount || 3;
+
+                    this.shardDamage = stats.splitDamage || 45;
+
+                    this.shardRange = stats.splitRange || 40;
+
+                }
+
+                update() {
+
+                    if (this.shardTimer > 0) {
+
+                        this.shardTimer = Math.max(0, this.shardTimer - deltaTime * 60);
+
+                    }
+
+                    super.update();
+
+                }
+
+                attack() {
+
+                    if (!this.target) return;
+
+                    const buildingHit = (this.target instanceof Tower) || (this.target instanceof Building);
+
+                    super.attack();
+
+                    if (buildingHit && this.shardTimer <= 0) {
+
+                        this.shardTimer = this.shardCooldown;
+
+                        for (let i = 0; i < this.shardCount; i++) {
+
+                            const angle = (Math.PI * 2 / this.shardCount) * i + (Math.random() - 0.5) * 0.4;
+
+                            const distance = this.shardRange + Math.random() * 10;
+
+                            const sx = this.x + Math.cos(angle) * distance;
+
+                            const sy = this.y + Math.sin(angle) * distance;
+
+                            const shard = new PrismShard(sx, sy, this.team, this.level);
+
+                            shard.attackDamage = this.shardDamage;
+
+                            shard.target = this.target;
+
+                            shard.speed = Math.max(1.1, this.speed + 0.1);
+
+                            gameObjects.push(shard);
+
+                        }
+
+                    }
+
+                }
+
+                findTarget(forceFindTower = false) {
+
+                    return findClosestEnemyTowerTarget(this);
+
+                }
+
+            }
+
+            class NebulaDart extends Unit {
+
+                constructor(x, y, team, level = 1) {
+
+                    const emoji = '🌀';
+
+                    super(x, y, 6, team, 160, 1.9, 12, 55, 0.9, emoji, false, false, level, 120);
+
+                    this.lifeSpan = 80;
+
+                    this.splashRange = 0;
+
+                    this.splashDamage = 0;
+
+                }
+
+                update() {
+
+                    super.update();
+
+                    this.lifeSpan -= deltaTime * 60;
+
+                    if (this.lifeSpan <= 0) this.health = 0;
+
+                }
+
+                attack() {
+
+                    if (!this.target) return;
+
+                    const towerTarget = this.target instanceof Tower ? this.target : null;
+
+                    super.attack();
+
+                    if (towerTarget && this.splashDamage > 0) {
+
+                        for (const obj of gameObjects) {
+
+                            if (!obj || obj === towerTarget || obj.team !== this.team) continue;
+
+                            if (!(obj instanceof Tower)) continue;
+
+                            const dist = getDistance(this, obj);
+
+                            if (dist > this.splashRange) continue;
+
+                            applyDamage(obj, this.splashDamage, { sourceType: 'nebulaDartSplash' });
+
+                        }
+
+                    }
+
+                }
+
+                findTarget(forceFindTower = false) {
+
+                    return findClosestEnemyTowerTarget(this);
+
+                }
+
+            }
+
+            class NebulaDrift extends Unit {
+
+                constructor(x, y, team, level = 1) {
+
+                    const template = allCards['nebulaDrift'];
+
+                    const stats = template.stats[level] || template.stats[1];
+
+                                                                                                                        const emoji = template.emoji || '\U0001F30C\U0001F6F0\uFE0F';
+
+
+                    super(x, y, 12, team, stats.health, stats.speed, stats.attackRange || 22, stats.damage, stats.hitSpeed, emoji, false, false, level, template.aggroRange || 120);
+
+                    this.isWinCondition = true;
+                    this.ignoresTroops = true;
+
+                    this.splitTriggered = false;
+
+                    this.splitThreshold = stats.splitThreshold || 0.7;
+
+                    this.splitCount = stats.splitCount || 3;
+
+                    this.splitSpeed = stats.splitSpeed || 1.8;
+
+                    this.splitDamage = stats.splitDamage || 90;
+
+                    this.splitRange = stats.splitRange || 56;
+
+                    this.splitSplashRange = stats.splitSplashRange || 58;
+
+                    this.splitSplashDamage = stats.splitSplashDamage || Math.round(this.splitDamage * 0.45);
+
+                    this.maxHealth = stats.health;
+
+                }
+
+                update() {
+
+                    if (!this.splitTriggered && this.maxHealth > 0) {
+
+                        const healthRatio = this.health / this.maxHealth;
+                        const closeTower = this.findClosestEnemyTower();
+                        const nearTower = closeTower && getDistance(this, closeTower) <= this.splitRange;
+
+                        if (closeTower && (healthRatio <= this.splitThreshold || nearTower)) {
+
+                            this.splitTriggered = true;
+
+                            this.spawnDarts(closeTower);
+
+                        }
+
+                    }
+
+                    super.update();
+
+                }
+
+                spawnDarts(targetTower = null) {
+
+                    const primaryTarget = targetTower || this.findClosestEnemyTower();
+
+                    for (let i = 0; i < this.splitCount; i++) {
+
+                        const offsetX = (Math.random() - 0.5) * 18;
+
+                        const offsetY = (Math.random() - 0.5) * 18;
+
+                        const dart = new NebulaDart(this.x + offsetX, this.y + offsetY, this.team, this.level);
+
+                        dart.attackDamage = this.splitDamage;
+
+                        dart.speed = this.splitSpeed;
+
+                        dart.splashRange = this.splitSplashRange;
+
+                        dart.splashDamage = this.splitSplashDamage;
+
+                        if (primaryTarget) {
+                            dart.target = primaryTarget;
+                        }
+
+                        gameObjects.push(dart);
+
+                    }
+
+                }
+
+                findClosestEnemyTower() {
+
+                    return findClosestEnemyTowerTarget(this);
+
+                }
+
+                findTarget(forceFindTower = false) {
+
+                    return this.findClosestEnemyTower();
+
+                }
+
+            }
+
+            class StarlineCorsair extends Unit {
+
+                constructor(x, y, team, level = 1) {
+
+                    const template = allCards['starlineCorsair'];
+
+                    const stats = template.stats[level] || template.stats[1];
+
+                                        const emoji = template.emoji || '\U0001F680\u26A1';
+
+
+                    super(x, y, 12, team, stats.health, stats.speed, stats.attackRange || 118, stats.damage, stats.hitSpeed, emoji, false, true, level, template.aggroRange || 140);
+
+                    this.isWinCondition = true;
+                    this.ignoresTroops = true;
+
+                    this.baseDamage = stats.damage;
+
+                    this.chainCount = 0;
+
+                    this.chainTimer = 0;
+
+                    this.chainAbilityCooldown = 0;
+
+                    this.chainCooldownDuration = stats.chainCooldown || template.chainCooldown || 140;
+
+                    this.burstSpeed = stats.bonusSpeed || 1.4;
+
+                    this.preferredLaneX = this.x < WIDTH / 2 ? LANE_LEFT_X : LANE_RIGHT_X;
+
+                    this.laneSwitchThreshold = template.laneSwitchThreshold || 2;
+
+                    this.laneSwitchRange = template.laneSwitchRange || 70;
+
+                    this.laneSwitched = false;
+
+                    this.isPhaseTraveling = false;
+
+                    this.phaseOriginX = this.x;
+
+                    this.phaseTargetX = this.preferredLaneX;
+
+                    this.phaseDirection = this.x < WIDTH / 2 ? 'left' : 'right';
+
+                    this.phaseTravelProgress = 0;
+
+                    this.phaseTravelDuration = 45;
+
+                    this.phaseSparkleAngle = 0;
+
+                }
+
+                update() {
+
+                    if (this.chainTimer > 0) {
+
+                        this.chainTimer -= deltaTime * 60;
+
+                        if (this.chainTimer <= 0) {
+
+                            this.chainCount = 0;
+
+                        }
+
+                    }
+
+                    if (this.chainAbilityCooldown > 0) {
+
+                        this.chainAbilityCooldown = Math.max(0, this.chainAbilityCooldown - deltaTime * 60);
+
+                    }
+
+                    this.monitorLanePressure();
+
+                    if (this.isPhaseTraveling) {
+
+                        this.updatePhaseTravel();
+
+                        return;
+
+                    }
+
+                    super.update();
+
+                }
+
+                attack() {
+
+                    if (!this.target) return;
+
+                    const currentTarget = this.target;
+
+                    const buildingHit = currentTarget && (currentTarget instanceof Tower || currentTarget instanceof Building);
+
+                    if (!buildingHit) return;
+
+                    this.attackDamage = this.baseDamage;
+
+                    super.attack();
+
+                    this.chainTimer = 0;
+
+                    this.chainAbilityCooldown = 0;
+
+                    this.lastTargetRef = currentTarget && currentTarget.health > 0 ? currentTarget : null;
+
+                }
+
+                monitorLanePressure() {
+
+                    if (this.laneSwitched) return;
+
+                    const leftCount = this.countLaneUnits('left');
+
+                    const rightCount = this.countLaneUnits('right');
+
+                    const currentLaneKey = this.preferredLaneX === LANE_LEFT_X ? 'left' : 'right';
+
+                    const otherLaneKey = currentLaneKey === 'left' ? 'right' : 'left';
+
+                    const currentCount = currentLaneKey === 'left' ? leftCount : rightCount;
+
+                    const otherCount = otherLaneKey === 'left' ? leftCount : rightCount;
+
+                    if (currentCount >= this.laneSwitchThreshold && otherCount < currentCount) {
+
+                        this.target = null;
+
+                        this.startLanePhase(otherLaneKey);
+
+                        if (typeof window !== 'undefined' && typeof window.onStarlineLaneSwitch === 'function') {
+
+                            window.onStarlineLaneSwitch(otherLaneKey);
+
+                        }
+
+                    }
+
+                }
+
+                startLanePhase(targetLaneKey) {
+
+                    if (this.isPhaseTraveling) return;
+
+                    this.laneSwitched = true;
+
+                    this.phaseDirection = targetLaneKey;
+
+                    this.phaseOriginX = this.x;
+
+                    this.phaseTargetX = targetLaneKey === 'left' ? LANE_LEFT_X : LANE_RIGHT_X;
+
+                    const distance = Math.abs(this.phaseTargetX - this.phaseOriginX);
+
+                    this.phaseTravelDuration = Math.max(35, Math.min(75, Math.round(distance / WIDTH * 60 + 20)));
+
+                    this.phaseTravelProgress = 0;
+
+                    this.isPhaseTraveling = true;
+
+                    this.isTargetable = false;
+
+                    if (typeof window !== 'undefined' && typeof window.onStarlinePhaseStart === 'function') {
+
+                        window.onStarlinePhaseStart(targetLaneKey);
+
+                    }
+
+                }
+
+                updatePhaseTravel() {
+
+                    this.phaseTravelProgress += deltaTime * 60;
+
+                    const progress = Math.min(1, this.phaseTravelProgress / this.phaseTravelDuration);
+
+                    this.x = this.phaseOriginX + (this.phaseTargetX - this.phaseOriginX) * progress;
+
+                    this.phaseSparkleAngle += 0.2 + progress * 0.1;
+
+                    if (typeof window !== 'undefined' && typeof window.onStarlinePhaseUpdate === 'function') {
+
+                        window.onStarlinePhaseUpdate(this.x, this.y, this.phaseDirection);
+
+                    }
+
+                    if (progress >= 1) {
+
+                        this.completePhaseTravel();
+
+                    }
+
+                }
+
+                completePhaseTravel() {
+
+                    this.isPhaseTraveling = false;
+
+                    this.isTargetable = true;
+
+                    this.preferredLaneX = this.phaseTargetX;
+
+                    this.target = null;
+
+                    if (typeof window !== 'undefined' && typeof window.onStarlinePhaseComplete === 'function') {
+
+                        window.onStarlinePhaseComplete(this.phaseDirection);
+
+                    }
+
+                }
+
+                countLaneUnits(laneKey) {
+
+                    let count = 0;
+
+                    for (const obj of gameObjects) {
+
+                        if (!obj || obj.health <= 0) continue;
+
+                        if (obj.team === this.team) continue;
+
+                        if (!(obj instanceof Unit)) continue;
+
+                        if (obj.isFlying) continue;
+
+                        const key = obj.x < WIDTH / 2 ? 'left' : 'right';
+
+                        if (key === laneKey) {
+
+                            count++;
+
+                        }
+
+                    }
+
+                    return count;
+
+                }
+
+                draw() {
+
+                    if (this.isPhaseTraveling) {
+
+                        ctx.save();
+
+                        const shimmer = (Math.sin(this.phaseSparkleAngle) + 1) / 2;
+
+                        const glowRadius = this.radius * (1.5 + shimmer * 0.6);
+
+                        ctx.globalAlpha = 0.65 + shimmer * 0.35;
+
+                        ctx.fillStyle = `rgba(255, 255, 255, ${0.65 + shimmer * 0.2})`;
+
+                        ctx.beginPath();
+
+                        ctx.arc(this.x, this.y, glowRadius, 0, Math.PI * 2);
+
+                        ctx.fill();
+
+                        ctx.strokeStyle = '#fde047';
+
+                        ctx.lineWidth = 3;
+
+                        ctx.stroke();
+
+                        ctx.restore();
+
+                        return;
+
+                    }
+
+                    super.draw();
+
+                }
+
+                findSecondaryTargets(max = 1, primary = null) {
+
+                    const candidates = [];
+
+                    for (const obj of gameObjects) {
+
+                        if (!obj || obj === primary || obj.team === this.team || obj.health <= 0) continue;
+
+                        if (!(obj instanceof Tower)) continue;
+
+                        const dist = getDistance(this, obj);
+
+                        candidates.push({ dist, obj });
+
+                    }
+
+                    candidates.sort((a, b) => a.dist - b.dist);
+
+                    return candidates.slice(0, max).map(entry => entry.obj);
+
+                }
+
+                findTarget(forceFindTower = false) {
+
+                    return findClosestEnemyTowerTarget(this);
+
+                }
+
+            }
+
+            class AstralBastion extends Unit {
+
+                constructor(x, y, team, level = 1) {
+
+                    const template = allCards['astralBastion'];
+
+                    const stats = template.stats[level] || template.stats[1];
+
+                                        const emoji = template.emoji || '\U0001F31F\U0001F6E1\uFE0F';
+
+
+                    super(x, y, 14, team, stats.health, stats.speed, stats.attackRange || 96, stats.damage, stats.hitSpeed, emoji, false, false, level, template.aggroRange || 160);
+
+                    this.isWinCondition = true;
+                    this.ignoresTroops = true;
+
+                    this.baseAttackRange = this.attackRangeBase;
+
+                    this.baseAttackCooldown = this.attackCooldown;
+
+                    this.buffRadius = stats.buffRadius || 70;
+
+                    this.pulseDamage = stats.pulseDamage || 38;
+
+                    this.pulseTimer = (stats.pulseInterval || 2.8) * 60;
+
+                    this.pulseCooldown = Math.max(1, (stats.pulseInterval || 2.8)) * 60;
+
+                }
+
+                update() {
+
+                    let closeAllies = 0;
+
+                    for (const obj of gameObjects) {
+
+                        if (obj === this || obj.team !== this.team) continue;
+
+                        if (!(obj instanceof Unit)) continue;
+
+                        if (getDistance(this, obj) > this.buffRadius) continue;
+
+                        closeAllies++;
+
+                    }
+
+                    this.attackRange = this.baseAttackRange + closeAllies * 8;
+
+                    const cooldownReduction = Math.min(40, closeAllies * 5);
+
+                    this.attackCooldown = Math.max(25, this.baseAttackCooldown - cooldownReduction);
+
+                    this.pulseTimer -= deltaTime * 60;
+
+                    if (this.pulseTimer <= 0) {
+
+                        this.pulseTimer += this.pulseCooldown;
+
+                        this.emitPulse();
+
+                    }
+
+                    super.update();
+
+                }
+
+                emitPulse() {
+
+                    for (const obj of gameObjects) {
+
+                        if (!obj || obj.health <= 0) continue;
+
+                        const dist = getDistance(this, obj);
+
+                        if (dist > this.buffRadius) continue;
+
+                        if (obj.team === this.team && obj instanceof Unit && obj.cooldownTimer !== undefined) {
+
+                            obj.cooldownTimer = Math.max(0, obj.cooldownTimer - 12);
+
+                        }
+
+                        if (obj.team !== this.team && obj instanceof Tower) {
+
+                            applyDamage(obj, this.pulseDamage, { sourceType: 'astralBastionPulse' });
+
+                        }
+
+                    }
+
+                }
+
+                findTarget(forceFindTower = false) {
+
+                    return findClosestEnemyTowerTarget(this);
+
+                }
+
+            }
+
             class StarSpark extends Unit {
 
                 constructor(x, y, team, level = 1) {
@@ -30907,6 +32167,116 @@ if (cardId === 'poison') {
                     ctx.restore();
 
                 }
+
+                findTarget(forceFindTower = false) {
+
+                    return findClosestEnemyBuilding(this);
+
+                }
+
+            }
+
+            function findClosestEnemyBuilding(source) {
+
+                let best = null;
+
+                let bestDist = Infinity;
+
+                for (const obj of gameObjects) {
+
+                    if (!obj || obj.health <= 0) continue;
+
+                    if (obj.team === source.team) continue;
+
+                    if (!(obj instanceof Tower) && !(obj instanceof Building)) continue;
+
+                    const dist = getDistance(source, obj);
+
+                    if (dist < bestDist) {
+
+                        bestDist = dist;
+
+                        best = obj;
+
+                    }
+
+                }
+
+                return best;
+
+            }
+
+            function findClosestEnemyTowerTarget(source) {
+
+                const laneCenter = typeof source.preferredLaneX === 'number' ? source.preferredLaneX : null;
+
+                const laneTolerance = laneCenter !== null && typeof source.laneSwitchRange === 'number' ? source.laneSwitchRange : 40;
+
+                const tryFindTower = (filterLane) => {
+
+                    let best = null;
+
+                    let bestDist = Infinity;
+
+                    for (const obj of gameObjects) {
+
+                        if (!obj || obj.health <= 0) continue;
+
+                        if (obj.team === source.team) continue;
+
+                        if (!(obj instanceof Tower)) continue;
+
+                        if (filterLane && laneCenter !== null && Math.abs(obj.x - laneCenter) > laneTolerance) continue;
+
+                        const dist = getDistance(source, obj);
+
+                        if (dist < bestDist) {
+
+                            bestDist = dist;
+
+                            best = obj;
+
+                        }
+
+                    }
+
+                    return best;
+
+                };
+
+                let best = tryFindTower(true);
+
+                if (best) return best;
+
+                best = tryFindTower(false);
+
+                if (best) return best;
+
+                let bestBuilding = null;
+
+                let bestBuildingDist = Infinity;
+
+                for (const obj of gameObjects) {
+
+                    if (!obj || obj.health <= 0) continue;
+
+                    if (obj.team === source.team) continue;
+
+                    if (!(obj instanceof Building)) continue;
+
+                    const dist = getDistance(source, obj);
+
+                    if (dist < bestBuildingDist) {
+
+                        bestBuildingDist = dist;
+
+                        bestBuilding = obj;
+
+                    }
+
+                }
+
+                return bestBuilding;
 
             }
 
@@ -33440,6 +34810,10 @@ if (cardId === 'poison') {
 
             if (typeof updateStarBoxesUI === 'function') updateStarBoxesUI();
 
+            updateBrowserRestoreButtonState();
+
+            startBrowserAutoSave();
+
             function initializeSiteMoveOverlay() {
 
                 const siteMoveOverlay = document.getElementById('siteMoveOverlay');
@@ -33846,6 +35220,9 @@ if (cardId === 'poison') {
 
             const leaveSite = () => {
                 if (hasLeftSite) return;
+                if (typeof persistBrowserSave === 'function') {
+                    persistBrowserSave(true);
+                }
                 hasLeftSite = true;
                 // Use replace so the game page is not kept in history.
                 location.replace('https://google.com');
